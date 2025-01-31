@@ -1,1 +1,75 @@
-hola
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Incidencias</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Barra Lateral -->
+        <aside class="sidebar">
+            <h2>Incidencias</h2>
+            <ul id="incidentList">
+                <!-- Las incidencias se añadirán aquí dinámicamente -->
+            </ul>
+            <button id="createTicketBtn">Crear Nuevo Ticket</button>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="main-content">
+            <h2>Detalles de la Incidencia</h2>
+            <div id="incidentDetails">
+                <p>Selecciona una incidencia de la lista para ver los detalles.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Formulario de Creación de Ticket (Inicialmente Oculto) -->
+    <div id="createTicketModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeModal">&times;</span>
+            <h3>Crear Nuevo Ticket</h3>
+            <form id="createTicketForm">
+                <label for="titulo">Título:</label><br>
+                <input type="text" id="titulo" name="titulo" required><br><br>
+                
+                <label for="descripcion">Descripción:</label><br>
+                <textarea id="descripcion" name="descripcion" rows="4" required></textarea><br><br>
+                
+                <label for="prioridad">Prioridad:</label><br>
+                <select id="prioridad" name="prioridad" required>
+                    <option value="">Seleccionar</option>
+                    <option value="Baja">Baja</option>
+                    <option value="Media">Media</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Crítica">Crítica</option>
+                </select><br><br>
+                
+                <label for="estado">Estado:</label><br>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccionar</option>
+                    <option value="Abierto">Abierto</option>
+                    <option value="En Progreso">En Progreso</option>
+                    <option value="Cerrado">Cerrado</option>
+                </select><br><br>
+                
+                <label for="tiempoEstimado">Tiempo Estimado:</label><br>
+                <input type="text" id="tiempoEstimado" name="tiempoEstimado" placeholder="e.g., 4 horas, 2 días" required><br><br>
+                
+                <label for="departamentoId">Departamento ID:</label><br>
+                <input type="number" id="departamentoId" name="departamentoId" required><br><br>
+                
+                <label for="tecnicoId">Técnico ID:</label><br>
+                <input type="number" id="tecnicoId" name="tecnicoId" required><br><br>
+                
+                <button type="submit">Crear Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
