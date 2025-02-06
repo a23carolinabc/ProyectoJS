@@ -5,9 +5,65 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Incidencias</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sidebar {
+            width: 20%;
+            padding: 10px;
+            border-right: 2px solid black;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 50%;
+            border-radius: 8px;
+        }
+
+        .close-button {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .btn-crear {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-crear:hover {
+            background-color: darkblue;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <!-- Barra Lateral -->
         <aside class="sidebar">
@@ -15,57 +71,70 @@
             <ul id="incidentList">
                 <!-- Las incidencias se añadirán aquí dinámicamente -->
             </ul>
-            <button id="createTicketBtn">Crear Nuevo Ticket</button>
+            <button class="btn-crear" id="openModal">Crear Nuevo Ticket</button>
         </aside>
 
-        <!-- Contenido Principal -->
-        <main class="main-content">
-            <h2>Detalles de la Incidencia</h2>
-            <div id="incidentDetails">
-                <p>Selecciona una incidencia de la lista para ver los detalles.</p>
-            </div>
-        </main>
+        <div class="content">
+            <h3>Lista de Tickets</h3>
+            <table id="tablaTickets">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Prioridad</th>
+                        <th>Estado</th>
+                        <th>Tiempo Estimado</th>
+                        <th>Departamento</th>
+                        <th>Técnico</th>
+                        <th>Fecha de Creación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaTickets">
+                    <!-- Aquí se insertarán las filas dinámicamente -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Formulario de Creación de Ticket (Inicialmente Oculto) -->
+    <!-- Modal de Creación de Ticket -->
     <div id="createTicketModal" class="modal">
         <div class="modal-content">
             <span class="close-button" id="closeModal">&times;</span>
             <h3>Crear Nuevo Ticket</h3>
-            <form id="createTicketForm">
-                <label for="titulo">Título:</label><br>
+            <form id="crearTicket">
+                <label for="titulo">Título:</label>
                 <input type="text" id="titulo" name="titulo" required><br><br>
-                
-                <label for="descripcion">Descripción:</label><br>
+
+                <label for="descripcion">Descripción:</label>
                 <textarea id="descripcion" name="descripcion" rows="4" required></textarea><br><br>
-                
-                <label for="prioridad">Prioridad:</label><br>
+
+                <label for="prioridad">Prioridad:</label>
                 <select id="prioridad" name="prioridad" required>
                     <option value="">Seleccionar</option>
                     <option value="Baja">Baja</option>
                     <option value="Media">Media</option>
                     <option value="Alta">Alta</option>
-                    <option value="Crítica">Crítica</option>
                 </select><br><br>
-                
-                <label for="estado">Estado:</label><br>
-                <select id="estado" name="estado" required>
-                    <option value="">Seleccionar</option>
-                    <option value="Abierto">Abierto</option>
+
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado">
+                    <option value="Sin iniciar">Sin iniciar</option>
                     <option value="En Progreso">En Progreso</option>
                     <option value="Cerrado">Cerrado</option>
                 </select><br><br>
-                
-                <label for="tiempoEstimado">Tiempo Estimado:</label><br>
-                <input type="text" id="tiempoEstimado" name="tiempoEstimado" placeholder="e.g., 4 horas, 2 días" required><br><br>
-                
-                <label for="departamentoId">Departamento ID:</label><br>
-                <input type="number" id="departamentoId" name="departamentoId" required><br><br>
-                
-                <label for="tecnicoId">Técnico ID:</label><br>
-                <input type="number" id="tecnicoId" name="tecnicoId" required><br><br>
-                
-                <button type="submit">Crear Ticket</button>
+
+                <label for="tiempoEstimado">Tiempo Estimado:</label>
+                <input type="text" id="tiempoEstimado" name="tiempoEstimado" placeholder="Ej: 72 horas"><br><br>
+
+                <label for="departamentoId">Departamento ID:</label>
+                <input type="number" id="departamentoId" name="departamentoId"><br><br>
+
+                <label for="tecnicoId">Técnico ID:</label>
+                <input type="number" id="tecnicoId" name="tecnicoId"><br><br>
+
+                <button type="submit" class="btn-crear">Crear Ticket</button>
             </form>
         </div>
     </div>

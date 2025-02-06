@@ -1,123 +1,151 @@
-class TicketManager {
-    constructor() {
-        this.tickets = this.cargarTickets();
+// =======================
+// 🎫 CLASE TICKET
+// =======================
+class Ticket {
+    constructor(id, titulo, descripcion, prioridad) {
+        this.id = id; // ID único
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.prioridad = this.validarPrioridad(prioridad);
+        this.fechaCreacion = new Date().toISOString();
     }
 
-    guardarTickets() {
-        localStorage.setItem("tickets", JSON.stringify(this.tickets));
-    }
-
-    cargarTickets() {
-        const ticketsGuardados = localStorage.getItem("tickets");
-        return ticketsGuardados ? JSON.parse(ticketsGuardados) : [];
-    }
-
-    crearTicket(titulo, descripcion, prioridad, estado, tiempoEstimado) {
-        const nuevoId = this.tickets.length > 0 ? this.tickets[this.tickets.length - 1].id + 1 : 1;
-        const nuevoTicket = { 
-            id: nuevoId, 
-            titulo, 
-            descripcion, 
-            prioridad, 
-            estado, 
-            tiempoEstimado, 
-            observaciones: "" 
-        };
-        this.tickets.push(nuevoTicket);
-        this.guardarTickets();
-        return nuevoTicket;
-    }
-
-    obtenerTicket(id) {
-        return this.tickets.find(ticket => ticket.id === id);
-    }
-
-    modificarTicket(id, cambios) {
-        const ticket = this.obtenerTicket(id);
-        if (ticket) {
-            Object.assign(ticket, cambios);
-            this.guardarTickets();
-        }
-    }
-
-    eliminarTicket(id) {
-        this.tickets = this.tickets.filter(ticket => ticket.id !== id);
-        this.guardarTickets();
+    validarPrioridad(prioridad) {
+        const niveles = ["Baja", "Media", "Alta"];
+        return niveles.includes(prioridad) ? prioridad : "Baja";
     }
 }
 
-// Instancia de TicketManager
-const gestor = new TicketManager();
+// =======================
+// 🎟 CREACIÓN DE TICKETS
+// =======================
 
-// Función para mostrar la lista de tickets en la barra lateral
-function mostrarListaTickets() {
-    const ticketList = document.getElementById("ticket-list");
-    ticketList.innerHTML = "";
+document.getElementById("crearTicket").addEventListener("submit", function(event) {
+    event.preventDefault(); // Evita recargar la página
 
-    gestor.tickets.forEach(ticket => {
-        const li = document.createElement("li");
-        li.textContent = `${ticket.titulo} (${ticket.prioridad})`;
-        li.dataset.id = ticket.id;
-        li.addEventListener("click", () => cargarTicket(ticket.id));
-        ticketList.appendChild(li);
+    // Obtener valores del formulario
+    const titulo = document.getElementById("titulo").value.trim();
+    const descripcion = document.getElementById("descripcion").value.trim();
+    const prioridad = document.getElementById("prioridad").value;
+
+    // Validar que los campos no estén vacíos
+    if (!titulo || !descripcion || !prioridad) {
+        alert("Por favor, completa todos los campos obligatorios.");
+        return;
+    }
+
+    // Generar ID único basado en timestamp
+    const id = Date.now();
+
+    // Crear el objeto Ticket
+    const nuevoTicket = new Ticket(id, titulo, descripcion, prioridad);
+
+    // Guardar en localStorage
+    guardarEnLocalStorage(nuevoTicket);
+
+    // Limpiar formulario
+    document.getElementById("crearTicket").reset();
+
+    // Cerrar modal
+    cerrarModal();
+
+    alert("🎉 Ticket creado exitosamente!");
+
+    // Actualizar la tabla con los nuevos datos
+    actualizarTablaTickets();
+});
+
+// =======================
+// 💾 LOCAL STORAGE (GUARDAR Y OBTENER)
+// =======================
+
+function guardarEnLocalStorage(ticket) {
+    let tickets = obtenerTicketsDesdeLocalStorage();
+    tickets.push(ticket);
+    localStorage.setItem("tickets", JSON.stringify(tickets));
+}
+
+function obtenerTicketsDesdeLocalStorage() {
+    return JSON.parse(localStorage.getItem("tickets")) || [];
+}
+
+// =======================
+// 📊 MOSTRAR TICKETS
+// =======================
+
+function actualizarTablaTickets() {
+    let tickets = obtenerTicketsDesdeLocalStorage();
+    let cuerpoTabla = document.getElementById("cuerpoTablaTickets");
+
+    // Limpiar contenido previo
+    cuerpoTabla.innerHTML = "";
+
+    tickets.forEach(ticket => {
+        let fila = document.createElement("tr");
+        fila.innerHTML = `
+            <td>${ticket.id}</td>
+            <td>${ticket.titulo}</td>
+            <td>${ticket.descripcion}</td>
+            <td>${ticket.prioridad}</td>
+            <td>${new Date(ticket.fechaCreacion).toLocaleString()}</td>
+            <td>
+                <button onclick="eliminarTicket(${ticket.id})">🗑 Eliminar</button>
+            </td>
+        `;
+        cuerpoTabla.appendChild(fila);
     });
 }
 
-// Función para cargar un ticket en el formulario de edición
-function cargarTicket(id) {
-    const ticket = gestor.obtenerTicket(id);
-    if (ticket) {
-        document.getElementById("ticket-id").value = ticket.id;
-        document.getElementById("titulo").value = ticket.titulo;
-        document.getElementById("descripcion").value = ticket.descripcion;
-        document.getElementById("prioridad").value = ticket.prioridad;
-        document.getElementById("estado").value = ticket.estado;
-        document.getElementById("tiempoEstimado").value = ticket.tiempoEstimado;
-        document.getElementById("observaciones").value = ticket.observaciones;
-    }
+// =======================
+// ❌ ELIMINAR TICKET
+// =======================
+
+function eliminarTicket(id) {
+    let tickets = obtenerTicketsDesdeLocalStorage();
+
+    // Filtrar para eliminar el ticket seleccionado
+    let nuevosTickets = tickets.filter(ticket => ticket.id !== id);
+    
+    // Guardar en localStorage
+    localStorage.setItem("tickets", JSON.stringify(nuevosTickets));
+
+    // Actualizar la tabla
+    actualizarTablaTickets();
+
+    alert("✅ Ticket eliminado correctamente.");
 }
 
-// Manejo del formulario para guardar cambios en un ticket
-document.getElementById("ticket-form").addEventListener("submit", function (e) {
-    e.preventDefault();
+// =======================
+// 🎭 MODAL (ABRIR Y CERRAR)
+// =======================
 
-    const id = parseInt(document.getElementById("ticket-id").value);
-    if (!id) return;
+// Referencias a los elementos del modal
+const modal = document.getElementById("createTicketModal");
+const openModalBtn = document.getElementById("openModal");
+const closeModalBtn = document.getElementById("closeModal");
 
-    const cambios = {
-        titulo: document.getElementById("titulo").value,
-        descripcion: document.getElementById("descripcion").value,
-        prioridad: document.getElementById("prioridad").value,
-        estado: document.getElementById("estado").value,
-        tiempoEstimado: document.getElementById("tiempoEstimado").value,
-        observaciones: document.getElementById("observaciones").value,
-    };
+// Evento para abrir el modal
+openModalBtn.addEventListener("click", abrirModal);
 
-    gestor.modificarTicket(id, cambios);
-    mostrarListaTickets();
-});
+// Evento para cerrar el modal
+closeModalBtn.addEventListener("click", cerrarModal);
 
-// Manejo del botón de eliminar ticket
-document.getElementById("delete-ticket").addEventListener("click", function () {
-    const id = parseInt(document.getElementById("ticket-id").value);
-    if (!id) return;
-
-    gestor.eliminarTicket(id);
-    document.getElementById("ticket-form").reset();
-    mostrarListaTickets();
-});
-
-// Función para crear un nuevo ticket de prueba (si la lista está vacía)
-function crearTicketDePrueba() {
-    if (gestor.tickets.length === 0) {
-        gestor.crearTicket("Error en Servidor", "El servidor dejó de responder", "alta", "Abierto", 4);
-        gestor.crearTicket("Fallo en Base de Datos", "No carga la base de datos", "media", "En progreso", 3);
-        mostrarListaTickets();
+// Cerrar el modal al hacer clic fuera de él
+window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+        cerrarModal();
     }
+});
+
+function abrirModal() {
+    modal.style.display = "block";
 }
 
-// Mostrar tickets al cargar la página
-document.addEventListener("DOMContentLoaded", function () {
-    crearTicketDePrueba();
-    mostrarListaTickets();
-});
+function cerrarModal() {
+    modal.style.display = "none";
+}
+
+// =======================
+// 🔄 INICIALIZAR TABLA AL CARGAR
+// =======================
+document.addEventListener("DOMContentLoaded", actualizarTablaTickets);
