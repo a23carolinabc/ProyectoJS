@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tickets</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .ticket { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Gestor de Tickets</h2>
+    <input type="text" id="titulo" placeholder="Título del ticket">
+    <textarea id="descripcion" placeholder="Descripción"></textarea>
+    <button onclick="agregarTicket()">Agregar Ticket</button>
+    
+    <h3>Tickets</h3>
+    <div id="listaTickets"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", mostrarTickets);
+
+        function obtenerTickets() {
+            return JSON.parse(localStorage.getItem("tickets")) || [];
+        }
+
+        function guardarTickets(tickets) {
+            localStorage.setItem("tickets", JSON.stringify(tickets));
+        }
+
+        function agregarTicket() {
+            let titulo = document.getElementById("titulo").value;
+            let descripcion = document.getElementById("descripcion").value;
+            if (titulo.trim() === "" || descripcion.trim() === "") {
+                alert("Por favor, completa ambos campos.");
+                return;
+            }
+            let tickets = obtenerTickets();
+            let nuevoTicket = { id: Date.now(), titulo, descripcion };
+            tickets.push(nuevoTicket);
+            guardarTickets(tickets);
+            mostrarTickets();
+            document.getElementById("titulo").value = "";
+            document.getElementById("descripcion").value = "";
+        }
+
+        function eliminarTicket(id) {
+            let tickets = obtenerTickets().filter(ticket => ticket.id !== id);
+            guardarTickets(tickets);
+            mostrarTickets();
+        }
+
+        function mostrarTickets() {
+            let tickets = obtenerTickets();
+            let lista = document.getElementById("listaTickets");
+            lista.innerHTML = "";
+            tickets.forEach(ticket => {
+                let div = document.createElement("div");
+                div.classList.add("ticket");
+                div.innerHTML = `<strong>${ticket.titulo}</strong><p>${ticket.descripcion}</p>
+                                 <button onclick="eliminarTicket(${ticket.id})">Eliminar</button>`;
+                lista.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
+
+apps-fileview.texmex_20250130.01_p0
+tickets.html
+Mostrando tickets.html.

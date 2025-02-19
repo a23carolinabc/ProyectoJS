@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/login.css">    
+</head>
+<body>
+    <div id="aviso" class="aviso">
+        <p>Usuario o contraseña incorrectos</p>
+    </div>
+    <form class="contenedor" id="loginForm">            
+        <h2>Iniciar Sesión</h2>
+
+        <input type="text" id="usuario" required placeholder="Usuario" autocomplete="off">
+        <br>
+        <input type="password" id="password" required placeholder="Contraseña">
+        <br>
+
+        <button type="submit">Ingresar</button>
+    </form>    
+
+    <script src="comprobarCredenciales.js"></script>
+</body>
+</html>

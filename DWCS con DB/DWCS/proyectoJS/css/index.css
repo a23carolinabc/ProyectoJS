@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('../imagenes/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+}
+
+.contenedor {
+    display: flex;
+    min-height: 100vh;
+}
+
+.cabecera {
+    width: 100%;
+    height:10%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.cabecera .titulo {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.barraLateral {
+    width: 10%;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 10%;
+    left: -10%;
+    transition: left 0.3s ease;
+}
+
+.barraLateral.abierta {
+    left: 0;
+}
+
+.barraLateral a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.hamburguesa {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    right: -40px;
+    top: 10px;
+}
+
+/* Contenido principal */
+.contenido {
+    width: 80%;
+    padding: 80px 20px 20px;
+    flex-grow: 1;
+    transition: margin-left 0.3s ease;
+}
+
+.barraLateral.abierta ~ .contenido {
+    margin-left: 100px;
+}
+
+.tabla {
+    width:90%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.tabla h2 {
+    margin-top: 0;
+}
+
+.tabla label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.tabla input,
+.tabla textarea,
+.tabla select{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
